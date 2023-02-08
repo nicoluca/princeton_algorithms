@@ -1,0 +1,1 @@
+[Princeton Algorithms I Week 2: Deque and Randomized Queue](https://www.coursera.org/learn/algorithms-part1/home/week/2)

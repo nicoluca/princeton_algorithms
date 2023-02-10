@@ -8,22 +8,22 @@ public class BruteCollinearPoints {
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
-        Point[] pointsCopy = Arrays.copyOf(points, points.length);
-        Arrays.sort(pointsCopy);
-        checkSortedPoints(pointsCopy);
-        this.segments = findSegments(Arrays.copyOf(pointsCopy, pointsCopy.length));
+        Point[] pointsSorted = checkAndSortPoints(points);
+        this.segments = findSegments(Arrays.copyOf(pointsSorted, points.length));
     }
 
-
-    private static void checkSortedPoints(Point[] points) {
-        if (points == null) throw new IllegalArgumentException("'points' is null");
-        if (points[points.length - 1] == null) throw new IllegalArgumentException("At least one point is null");
-
-        for (int i = 0; i < points.length - 1; i++) {
-            if (points[i] == null) throw new IllegalArgumentException("At least one point is null");
-            if (points[i].compareTo(points[i + 1]) == 0) throw new IllegalArgumentException("Contains duplicate points");
+    private static Point[] checkAndSortPoints(Point[] points) {
+        if (points == null) throw new IllegalArgumentException("Points array is null");
+        for (Point p : points) {
+            if (p == null) throw new IllegalArgumentException("Point is null");
         }
-
+        Point[] pointsSorted = points.clone();
+        Arrays.sort(pointsSorted);
+        for (int i = 0; i < pointsSorted.length - 1; i++) {
+            if (pointsSorted[i].compareTo(pointsSorted[i + 1]) == 0)
+                throw new IllegalArgumentException("Duplicate points");
+        }
+        return pointsSorted;
     }
 
     private static LineSegment[] findSegments(Point[] points) {
@@ -53,8 +53,9 @@ public class BruteCollinearPoints {
                 }
             }
         }
+
         if (segments.isEmpty()) return new LineSegment[0];
-        return segments.toArray(new LineSegment[segments.size()]);
+        else return segments.toArray(new LineSegment[0]);
     }
 
 

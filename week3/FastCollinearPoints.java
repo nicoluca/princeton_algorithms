@@ -6,20 +6,22 @@ public class FastCollinearPoints {
     private final LineSegment[] segments;
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
-        Point[] pointsCopy = Arrays.copyOf(points, points.length);
-        Arrays.sort(pointsCopy);
-        checkSortedPoints(pointsCopy);
-        this.segments = findSegments(Arrays.copyOf(pointsCopy, pointsCopy.length));
+        Point[] pointsSorted = checkAndSortPoints(points);
+        this.segments = findSegments(Arrays.copyOf(pointsSorted, points.length));
     }
 
-    private static void checkSortedPoints(Point[] points) {
-        if (points == null) throw new IllegalArgumentException("'points' is null");
-        if (points[points.length - 1] == null) throw new IllegalArgumentException("At least one point is null");
-
-        for (int i = 0; i < points.length - 1; i++) {
-            if (points[i] == null) throw new IllegalArgumentException("At least one point is null");
-            if (points[i].compareTo(points[i + 1]) == 0) throw new IllegalArgumentException("Contains duplicate points");
+    private static Point[] checkAndSortPoints(Point[] points) {
+        if (points == null) throw new IllegalArgumentException("Points array is null");
+        for (Point p : points) {
+            if (p == null) throw new IllegalArgumentException("Point is null");
         }
+        Point[] pointsSorted = points.clone();
+        Arrays.sort(pointsSorted);
+        for (int i = 0; i < pointsSorted.length - 1; i++) {
+            if (pointsSorted[i].compareTo(pointsSorted[i + 1]) == 0)
+                throw new IllegalArgumentException("Duplicate points");
+        }
+        return pointsSorted;
     }
 
     public int numberOfSegments() {
@@ -31,8 +33,8 @@ public class FastCollinearPoints {
     }
 
     private static LineSegment[] findSegments(Point[] points) {
-        List<LineSegment> segments = new ArrayList<>();
         if (points.length < 4) return new LineSegment[0];
+        List<LineSegment> segments = new ArrayList<>();
 
         for (int p = 0; p < points.length; p++) {
             // Create tmp array for examination with respect to p, sort them by slope to p
@@ -53,10 +55,11 @@ public class FastCollinearPoints {
                         Point[] collinearPoints = new Point[amountCollinear + 1];
                         collinearPoints[0] = currentPoint;
                         System.arraycopy(tmpPoints, i - amountCollinear + 1, collinearPoints, 1, amountCollinear);
+                        Arrays.sort(collinearPoints);
                         LineSegment current = new LineSegment(collinearPoints[0], collinearPoints[collinearPoints.length - 1]);
 
                         // Check if the segment is already in the list
-                        // HashSet would be better, but it is not allowed
+                        // TODO Inefficient, and should not be checked via toString()
                         boolean alreadyInList = false;
                         for (LineSegment segment : segments) {
                             if (segment.toString().equals(current.toString())) {
@@ -64,7 +67,9 @@ public class FastCollinearPoints {
                                 break;
                             }
                         }
-                        if (!alreadyInList) segments.add(current);
+
+                        if (!alreadyInList)
+                            segments.add(current);
                     }
                     amountCollinear = 1;
                 } else {
@@ -72,7 +77,6 @@ public class FastCollinearPoints {
                 }
             }
         }
-        if (segments.isEmpty()) return new LineSegment[0];
         return segments.toArray(new LineSegment[0]);
     }
 }

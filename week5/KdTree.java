@@ -10,13 +10,14 @@ public class KdTree {
     private static final boolean VERTICAL = true;
     private static final boolean HORIZONTAL = false;
     private Node root;
+    private int size = 0;
 
-    private class Node {
-        private Point2D point;
+    private static class Node {
+        private final Point2D point;
         private Node left;
         private Node right;
-        private boolean isVertical;
-        private RectHV rect;
+        private final boolean isVertical;
+        private final RectHV rect;
 
         private Node(Point2D point, boolean isVertical, RectHV rect) {
             this.point = point;
@@ -34,22 +35,17 @@ public class KdTree {
     }
 
     public int size() {
-        return sizeOfSubTree(this.root);
-    }
-
-    private int sizeOfSubTree(Node node) {
-        if (node == null)
-            return 0;
-        else
-            return 1 + sizeOfSubTree(node.left) + sizeOfSubTree(node.right);
+        return this.size;
     }
 
     public void insert(Point2D point) {
         if (point == null)
             throw new IllegalArgumentException("Point cannot be null.");
 
-        if (this.root == null)
+        if (this.root == null) {
             this.root = new Node(point, VERTICAL, new RectHV(0.0, 0.0, 1.0, 1.0));
+            this.size++;
+        }
         else
             insertIntoTree(this.root, point);
     }
@@ -88,6 +84,7 @@ public class KdTree {
         if (parent.right == null) {
             RectHV rect = generateRightRectangle(parent);
             parent.right = new Node(pointToInsert, parent.isVertical ? HORIZONTAL : VERTICAL, rect);
+            this.size++;
         } else
             insertIntoTree(parent.right, pointToInsert);
     }
@@ -103,6 +100,7 @@ public class KdTree {
         if (subTreeRoot.left == null) {
             RectHV rect = generateLeftRectangle(subTreeRoot);
             subTreeRoot.left = new Node(pointToInsert, subTreeRoot.isVertical ? HORIZONTAL : VERTICAL, rect);
+            this.size++;
         } else
             insertIntoTree(subTreeRoot.left, pointToInsert);
     }
@@ -234,14 +232,14 @@ public class KdTree {
 
         String sideToInspectFirst = sideToInspectFirst(rootToInspect, pointToInspect);
         switch (sideToInspectFirst) {
-            case "left":
+            case "left" -> {
                 currentNearest = inspectLeftChildForNearest(rootToInspect, pointToInspect, currentNearest);
                 currentNearest = inspectRightChildForNearest(rootToInspect, pointToInspect, currentNearest);
-                break;
-            case "right":
+            }
+            case "right" -> {
                 currentNearest = inspectRightChildForNearest(rootToInspect, pointToInspect, currentNearest);
                 currentNearest = inspectLeftChildForNearest(rootToInspect, pointToInspect, currentNearest);
-                break;
+            }
         }
 
         return currentNearest;

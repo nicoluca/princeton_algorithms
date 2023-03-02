@@ -60,10 +60,10 @@ public class PointSET {
             throw new IllegalArgumentException("Point cannot be null.");
 
         Point2D nearestPoint = null;
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
 
         for (Point2D point : this.points) {
-            double distance = point.distanceTo(p);
+            double distance = point.distanceSquaredTo(p);
             if (distance < nearestDistance) {
                 nearestDistance = distance;
                 nearestPoint = point;

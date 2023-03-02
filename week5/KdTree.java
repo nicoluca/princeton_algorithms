@@ -22,7 +22,6 @@ public class KdTree {
             this.point = point;
             this.isVertical = isVertical;
             this.rect = rect;
-            System.out.println("Created node with point: " + point.toString() + " and rect: " + rect.toString());
         }
     }
 
@@ -87,13 +86,13 @@ public class KdTree {
 
     private void insertIntoRightChild(Node parent, Point2D pointToInsert) {
         if (parent.right == null) {
-            RectHV rect = generateRightRectangle(parent, pointToInsert);
+            RectHV rect = generateRightRectangle(parent);
             parent.right = new Node(pointToInsert, parent.isVertical ? HORIZONTAL : VERTICAL, rect);
         } else
             insertIntoTree(parent.right, pointToInsert);
     }
 
-    private RectHV generateRightRectangle(Node parent, Point2D pointToInsert) {
+    private static RectHV generateRightRectangle(Node parent) {
         if (parent.isVertical)
             return new RectHV(parent.point.x(), parent.rect.ymin(), parent.rect.xmax(), parent.rect.ymax());
         else
@@ -102,13 +101,13 @@ public class KdTree {
 
     private void insertIntoLeftChild(Node subTreeRoot, Point2D pointToInsert) {
         if (subTreeRoot.left == null) {
-            RectHV rect = generateLeftRectangle(subTreeRoot, pointToInsert);
+            RectHV rect = generateLeftRectangle(subTreeRoot);
             subTreeRoot.left = new Node(pointToInsert, subTreeRoot.isVertical ? HORIZONTAL : VERTICAL, rect);
         } else
             insertIntoTree(subTreeRoot.left, pointToInsert);
     }
 
-    private RectHV generateLeftRectangle(Node parent, Point2D pointToInsert) {
+    private static RectHV generateLeftRectangle(Node parent) {
         if (parent.isVertical)
             return new RectHV(parent.rect.xmin(), parent.rect.ymin(), parent.point.x(), parent.rect.ymax());
         else
@@ -233,13 +232,45 @@ public class KdTree {
         if (rootToInspect.point.distanceSquaredTo(pointToInspect) < currentNearestDistance)
             currentNearest = rootToInspect.point;
 
-        // String sideToInspectFirst = sideToInspectFirst(rootToInspect, pointToInspect);
-        if (rootToInspect.left != null && rootToInspect.left.rect.distanceSquaredTo(pointToInspect) < currentNearestDistance)
-            currentNearest = inspectSubTreeForNearest(rootToInspect.left, pointToInspect, currentNearest);
-        if (rootToInspect.right != null && rootToInspect.right.rect.distanceSquaredTo(pointToInspect) < currentNearestDistance)
-            currentNearest = inspectSubTreeForNearest(rootToInspect.right, pointToInspect, currentNearest);
+        String sideToInspectFirst = sideToInspectFirst(rootToInspect, pointToInspect);
+        switch (sideToInspectFirst) {
+            case "left":
+                currentNearest = inspectLeftChildForNearest(rootToInspect, pointToInspect, currentNearest);
+                currentNearest = inspectRightChildForNearest(rootToInspect, pointToInspect, currentNearest);
+                break;
+            case "right":
+                currentNearest = inspectRightChildForNearest(rootToInspect, pointToInspect, currentNearest);
+                currentNearest = inspectLeftChildForNearest(rootToInspect, pointToInspect, currentNearest);
+                break;
+        }
 
         return currentNearest;
+    }
+
+    private Point2D inspectLeftChildForNearest(Node rootToInspect, Point2D pointToInspect, Point2D currentNearest) {
+        if (rootToInspect.left != null && rootToInspect.left.rect.distanceSquaredTo(pointToInspect) < currentNearest.distanceSquaredTo(pointToInspect))
+            currentNearest = inspectSubTreeForNearest(rootToInspect.left, pointToInspect, currentNearest);
+        return currentNearest;
+    }
+
+    private Point2D inspectRightChildForNearest(Node rootToInspect, Point2D pointToInspect, Point2D currentNearest) {
+        if (rootToInspect.right != null && rootToInspect.right.rect.distanceSquaredTo(pointToInspect) < currentNearest.distanceSquaredTo(pointToInspect))
+            currentNearest = inspectSubTreeForNearest(rootToInspect.right, pointToInspect, currentNearest);
+        return currentNearest;
+    }
+
+    private String sideToInspectFirst(Node rootToInspect, Point2D pointToInspect) {
+        if (rootToInspect.isVertical) {
+            if (rootToInspect.point.x() > pointToInspect.x())
+                return "left";
+            else
+                return "right";
+        } else {
+            if (rootToInspect.point.y() > pointToInspect.y())
+                return "left";
+            else
+                return "right";
+        }
     }
 
     public static void main(String[] args) {

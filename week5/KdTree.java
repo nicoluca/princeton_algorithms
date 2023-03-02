@@ -232,16 +232,15 @@ public class KdTree {
 
         String sideToInspectFirst = sideToInspectFirst(rootToInspect, pointToInspect);
         switch (sideToInspectFirst) {
-            case "left" -> {
+            case "left":
                 currentNearest = inspectLeftChildForNearest(rootToInspect, pointToInspect, currentNearest);
                 currentNearest = inspectRightChildForNearest(rootToInspect, pointToInspect, currentNearest);
-            }
-            case "right" -> {
+                break;
+            case "right":
                 currentNearest = inspectRightChildForNearest(rootToInspect, pointToInspect, currentNearest);
                 currentNearest = inspectLeftChildForNearest(rootToInspect, pointToInspect, currentNearest);
+                break;
             }
-        }
-
         return currentNearest;
     }
 

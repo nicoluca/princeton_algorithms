@@ -139,8 +139,7 @@ public class KdTree {
     }
 
     private boolean inspectVertically(Node rootToInspect, Point2D p) {
-        double diffY = rootToInspect.point.y() - p.y();
-        if (diffY > 0.0) {
+        if (rootToInspect.point.y() > p.y()) {
             return inspectRightChild(rootToInspect, p);
         } else {
             return inspectLeftChild(rootToInspect, p);

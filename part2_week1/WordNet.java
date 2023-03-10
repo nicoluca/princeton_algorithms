@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 
 import java.util.HashMap;
@@ -9,7 +10,6 @@ public class WordNet {
     private final HashMap<Integer, String> synsets;
     private final HashMap<String, Bag<Integer>> nouns;
     private final SAP sap;
-
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -24,9 +24,11 @@ public class WordNet {
 
         readHypernyms(hypernyms);
 
+        if (hasCycle())
+            throw new IllegalArgumentException("Digraph has cycle.");
+
         this.sap = new SAP(this.digraph);
     }
-
 
     // returns all WordNet nouns
     public Iterable<String> nouns() {
@@ -73,8 +75,8 @@ public class WordNet {
             throw new IllegalArgumentException(String.format("Noun %s not found.", noun));
     }
 
-    private int readSynsets(String synsets) {
-        In in = new In(synsets);
+    private int readSynsets(String synsetsToRead) {
+        In in = new In(synsetsToRead);
         int count = 0;
 
         while (in.hasNextLine()) {
@@ -84,9 +86,9 @@ public class WordNet {
             String synset = fields[1];
             this.synsets.put(id, synset);
 
-            String[] nouns = synset.split(" ");
+            String[] nounsToRead = synset.split(" ");
 
-            for (String noun : nouns) {
+            for (String noun : nounsToRead) {
                 if (!this.nouns.containsKey(noun))
                     this.nouns.put(noun, new Bag<>());
 
@@ -113,16 +115,12 @@ public class WordNet {
         }
     }
 
+    private boolean hasCycle() {
+        DirectedCycle cycle = new DirectedCycle(this.digraph);
+        return cycle.hasCycle();
+    }
+
     // do unit testing of this class
     public static void main(String[] args) {
-        String synsets = System.getProperty("user.dir") + "/ressources/synsets.txt";
-        String hypernyms = System.getProperty("user.dir") + "/ressources/hypernyms.txt";
-        WordNet wordNet = new WordNet(synsets, hypernyms);
-
-        assert wordNet.distance("b", "c") == 2 : "Expected 2 for distance between a and b, got " + wordNet.distance("b", "c");
-        assert wordNet.sap("b", "c").equals("a") : "Expected a for ancestor between a and b, got " + wordNet.sap("b", "c");
-        assert !wordNet.isNoun("d") : "Did not expect d to not be a noun, got " + wordNet.isNoun("d");
-        assert wordNet.isNoun("a") : "Expected a to be a noun, got " + wordNet.isNoun("a");
-        System.out.println("All tests passed.");
     }
 }

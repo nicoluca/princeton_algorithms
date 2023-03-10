@@ -24,7 +24,7 @@ public class SAP {
         validateVertex(v);
         validateVertex(w);
 
-        int[] pair = new int[]{v, w};
+        int[] pair = {v, w};
         sapVerticesPair(pair);
         return previousResults.get(pair)[0];
     }
@@ -34,7 +34,7 @@ public class SAP {
         validateVertex(v);
         validateVertex(w);
 
-        int[] pair = new int[]{v, w};
+        int[] pair = {v, w};
         sapVerticesPair(pair);
         return previousResults.get(pair)[1];
     }
@@ -81,7 +81,7 @@ public class SAP {
             }
         }
 
-        int[] result = new int[]{shortestDistance, ancestor};
+        int[] result = {shortestDistance, ancestor};
         previousResults.put(pair, result);
     }
 
@@ -89,7 +89,7 @@ public class SAP {
         Stack<int[]> pairs = new Stack<>();
         for (Integer vertex : v) {
             for (Integer vertex2 : w) {
-                int[] pair = new int[]{vertex, vertex2};
+                int[] pair = {vertex, vertex2};
                 pairs.push(pair);
                 sapVerticesPair(pair);
             }
@@ -111,7 +111,7 @@ public class SAP {
 
     private boolean checkForEquality(int[] pair) {
         if (pair[0] == pair[1]) {
-            int[] result = new int[]{0, pair[0]};
+            int[] result = {0, pair[0]};
             previousResults.put(pair, result);
             return true;
         }
@@ -119,13 +119,10 @@ public class SAP {
         return false;
     }
 
-
-
     private void validateVertex(int vertex) {
         if (vertex < 0 || vertex >= digraph.V())
             throw new IllegalArgumentException("Vertex cannot be negative or out of range.");
     }
-
 
     private void validateIterable(Iterable<Integer> v) {
         if (v == null)

@@ -11,9 +11,6 @@ public class SeamCarver {
             throw new IllegalArgumentException("Picture cannot be null.");
 
         this.picture = new Picture(picture);
-        System.out.println("Picture in SeamCarver: ");
-        System.out.println("Width: " + this.picture.width());
-        System.out.println("Height: " + this.picture.height());
         this.energyMatrix = calculateEnergyMatrix();
     }
 
@@ -92,10 +89,6 @@ public class SeamCarver {
         for (int row = 0; row < height(); row++)
             for (int column = 0; column < width(); column++)
                 energyMatrixCalculated[row][column] = energy(column, row);
-
-        // Print the energy matrix
-        System.out.println("Energy Matrix in Seam Carver:");
-        DebugUtil.printMatrix(energyMatrixCalculated);
 
         return energyMatrixCalculated;
     }

@@ -209,7 +209,25 @@ public class SeamCarver {
         assert seamCarver.width() == 2 : "Width should be 2. Was: " + seamCarver.width();
         assert seamCarver.height() == 3 : "Height should be 3. Was: " + seamCarver.height();
 
+        pathToPicture = "test-ressources/3x7.png";
+        picture = new Picture(pathToPicture);
+        seamCarver = new SeamCarver(picture);
+        verticalSeam = seamCarver.findVerticalSeam();
+        assert verticalSeam.length == 7 : "Vertical seam length should be 7. Was: " + verticalSeam.length;
+        double energyForSeam = getEnergyForSeam(verticalSeam, seamCarver);
+        assert energyForSeam == 3386.6298830470546 : "\nEnergy for seam should be 3386.6298830470546.\n" +
+                "Was: " + energyForSeam + "\n" +
+                "Seam was: " + Arrays.toString(verticalSeam); // From Autograder output
+
         // Additional testing using Princeton's provided test clients.
+    }
+
+    private static double getEnergyForSeam(int[] verticalSeam, SeamCarver seamCarver) {
+        double energy = 0;
+        for (int i = 0; i < verticalSeam.length; i++)
+            energy += seamCarver.energy(verticalSeam[i], i);
+
+        return energy;
     }
 
 

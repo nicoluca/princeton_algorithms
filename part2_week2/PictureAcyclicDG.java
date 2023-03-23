@@ -15,7 +15,7 @@ public class PictureAcyclicDG {
 
         this.energyMatrix = new double[width][height];
         for (int column = 0; column < width; column++)
-            energyMatrix[column] = Arrays.copyOf(energyMatrix[column], height);
+            this.energyMatrix[column] = Arrays.copyOf(energyMatrix[column], height);
 
         this.distTo = new double[width][height];
         this.edgeTo = new int[width][height];

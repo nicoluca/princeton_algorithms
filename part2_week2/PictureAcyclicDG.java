@@ -21,21 +21,25 @@ public class PictureAcyclicDG {
         this.distTo = new double[height][width];
         this.edgeTo = new int[height][width];
 
-        // Fill first edgeTo row with the column index, rest with -1.
-        IntStream.range(0, width).forEach(column -> edgeTo[0][column] = column);
-        for (int row = 1; row < height; row++)
-                Arrays.fill(edgeTo[row], -1);
-
-        // Fill first row of distTo with 1000, rest with infinity.
-        for (int row = 0; row < height; row++) {
-            if (row == 0)
-                Arrays.fill(distTo[row], 1000);
-            else
-                Arrays.fill(distTo[row], Double.POSITIVE_INFINITY);
-        }
+        initializeFirstRow();
+        initializeDistances();
 
         traverseGraph();
         findShortestPath();
+    }
+
+    private void initializeFirstRow() {
+        // Fill first edgeTo row with the column index as start and distTo with 1000.
+        IntStream.range(0, width).forEach(column -> {
+            edgeTo[0][column] = column;
+            distTo[0][column] = 1000;
+        });
+    }
+
+    private void initializeDistances() {
+        // First row is already initialized, so we start from the second row.
+        for (int row = 1; row < height; row++)
+                Arrays.fill(distTo[row], Double.POSITIVE_INFINITY);
     }
 
     public int[] getSeam() {

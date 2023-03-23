@@ -11,6 +11,9 @@ public class SeamCarver {
             throw new IllegalArgumentException("Picture cannot be null.");
 
         this.picture = new Picture(picture);
+        System.out.println("Picture in SeamCarver: ");
+        System.out.println("Width: " + this.picture.width());
+        System.out.println("Height: " + this.picture.height());
         this.energyMatrix = calculateEnergyMatrix();
     }
 
@@ -69,10 +72,10 @@ public class SeamCarver {
     }
 
     private double[][] rotateEnergyMatrix(double[][] energyMatrixToRotate) {
-        double[][] rotatedEnergyMatrix = new double[height()][width()];
-        for (int column = 0; column < width(); column++)
-            for (int row = 0; row < height(); row++)
-                rotatedEnergyMatrix[row][column] = energyMatrixToRotate[column][row];
+        double[][] rotatedEnergyMatrix = new double[energyMatrixToRotate[0].length][energyMatrixToRotate.length];
+        for (int row = 0; row < energyMatrixToRotate.length; row++)
+            for (int column = 0; column < energyMatrixToRotate[0].length; column++)
+                rotatedEnergyMatrix[column][row] = energyMatrixToRotate[row][column];
 
         return rotatedEnergyMatrix;
     }
@@ -85,10 +88,14 @@ public class SeamCarver {
     }
 
     private double[][] calculateEnergyMatrix() {
-        double[][] energyMatrixCalculated = new double[width()][height()];
-        for (int column = 0; column < width(); column++)
-            for (int row = 0; row < height(); row++)
-                energyMatrixCalculated[column][row] = energy(column, row);
+        double[][] energyMatrixCalculated = new double[height()][width()];
+        for (int row = 0; row < height(); row++)
+            for (int column = 0; column < width(); column++)
+                energyMatrixCalculated[row][column] = energy(column, row);
+
+        // Print the energy matrix
+        System.out.println("Energy Matrix in Seam Carver:");
+        DebugUtil.printMatrix(energyMatrixCalculated);
 
         return energyMatrixCalculated;
     }
@@ -175,6 +182,9 @@ public class SeamCarver {
 
     //  unit testing (optional)
     public static void main(String[] args) {
+        System.out.println("Starting tests...");
+        System.out.println("############## Testing 3x4.png ##############");
+        System.out.println();
         String pathToPicture = "test-ressources/3x4.png";
         double doubleCompareTolerance = 0.0001d;
 
@@ -197,8 +207,8 @@ public class SeamCarver {
         int[] horizontalSeam = seamCarver.findHorizontalSeam();
         assert horizontalSeam.length == 3 : "Horizontal seam length should be 3. Was: " + horizontalSeam.length;
 
-        assert verticalSeam[0] == 1 : "Vertical seam should be [1, 1, 0, 0]. Was: " + Arrays.toString(verticalSeam);
-        assert horizontalSeam[0] == 2 : "Horizontal seam should be [2, 1, 0]. Was: " + Arrays.toString(horizontalSeam);
+        assert verticalSeam[1] == 1 : "Vertical seam should be [0, 1, 1, 0]. Was: " + Arrays.toString(verticalSeam);
+        assert horizontalSeam[1] == 2 : "Horizontal seam should be [1, 2, 1]. Was: " + Arrays.toString(horizontalSeam);
 
         seamCarver.removeVerticalSeam(verticalSeam);
         assert seamCarver.width() == 2 : "Width should be 2. Was: " + seamCarver.width();
@@ -209,6 +219,8 @@ public class SeamCarver {
         assert seamCarver.width() == 2 : "Width should be 2. Was: " + seamCarver.width();
         assert seamCarver.height() == 3 : "Height should be 3. Was: " + seamCarver.height();
 
+        System.out.println("############## Testing 3x7.png ##############");
+        System.out.println();
         pathToPicture = "test-ressources/3x7.png";
         picture = new Picture(pathToPicture);
         seamCarver = new SeamCarver(picture);
@@ -219,6 +231,19 @@ public class SeamCarver {
                 "Was: " + energyForSeam + "\n" +
                 "Seam was: " + Arrays.toString(verticalSeam); // From Autograder output
 
+        System.out.println("############## Testing 4x6.png ##############");
+        System.out.println();
+        pathToPicture = "test-ressources/4x6.png";
+        picture = new Picture(pathToPicture);
+        seamCarver = new SeamCarver(picture);
+        verticalSeam = seamCarver.findVerticalSeam();
+        assert verticalSeam.length == 6 : "Vertical seam length should be 6. Was: " + verticalSeam.length;
+        energyForSeam = getEnergyForSeam(verticalSeam, seamCarver);
+        assert energyForSeam == 2706.3701162032385 : "\nEnergy for seam should be 2706.3701162032385.\n" +
+                "Was: " + energyForSeam + "\n" +
+                "Seam was: " + Arrays.toString(verticalSeam); // From Autograder output
+
+        System.out.println("All tests passed.");
         // Additional testing using Princeton's provided test clients.
     }
 

@@ -98,7 +98,6 @@ public class BaseballElimination {
         return listOfProof.isEmpty() ? null : listOfProof;
     }
 
-
     private FlowNetwork createFlowNetwork(int team) {
         int numberOfRemainingGames = this.numberOfGames - this.numberOfTeams + 1;
         int nuberOfRemainingTeams = this.numberOfTeams - 1;
@@ -238,8 +237,6 @@ public class BaseballElimination {
         assert division5.against("Baltimore", "New_York") == 3 : "Baltimore should have played New_York 3 time, played " + division5.against("Baltimore", "New_York") + " times";
 
         assert division5.isEliminated("Detroit") : "Detroit should be eliminated";
-
-
 
         BaseballElimination division = new BaseballElimination(args[0]);
         for (String team : division.teams()) {

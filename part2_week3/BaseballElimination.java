@@ -52,7 +52,7 @@ public class BaseballElimination {
 
     private void calculateElimination() {
         // Loop through all teams for trivial elimination, if not eliminated, calculate flow network
-        int currentMaxWins = getCurrentMaxWins();®
+        int currentMaxWins = getCurrentMaxWins();
 
         for (int team = 0; team < this.numberOfTeams; team++) {
             if (isTriviallyEliminated(team, currentMaxWins)) {

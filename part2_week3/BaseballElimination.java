@@ -1,4 +1,8 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.FordFulkerson;
+import edu.princeton.cs.algs4.FlowEdge;
+import edu.princeton.cs.algs4.FlowNetwork;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,14 +45,14 @@ public class BaseballElimination {
             wins[team] = in.readInt();
             losses[team] = in.readInt();
             remaining[team] = in.readInt();
-            for (int against = 0; against < numberOfTeams; against++)
-                this.against[team][against] = in.readInt();
+            for (int playingAgainst = 0; playingAgainst < numberOfTeams; playingAgainst++)
+                this.against[team][playingAgainst] = in.readInt();
         }
     }
 
     private void calculateElimination() {
         // Loop through all teams for trivial elimination, if not eliminated, calculate flow network
-        int currentMaxWins = getCurrentMaxWins();
+        int currentMaxWins = getCurrentMaxWins();®
 
         for (int team = 0; team < this.numberOfTeams; team++) {
             if (isTriviallyEliminated(team, currentMaxWins)) {
@@ -83,15 +87,15 @@ public class BaseballElimination {
     }
 
     private List<String> getCertificateOfElimination(int team, FordFulkerson fordFulkerson) {
-        List<String> certificateOfElimination = new ArrayList<>();
+        List<String> listOfProof = new ArrayList<>();
         for (int otherTeam = 0; otherTeam < this.numberOfTeams; otherTeam++) {
             if (otherTeam == team)
                 continue;
 
             if (fordFulkerson.inCut(getTeamVertex(otherTeam, team, this.numberOfGames - this.numberOfTeams + 1)))
-                certificateOfElimination.add(this.teams[otherTeam]);
+                listOfProof.add(this.teams[otherTeam]);
         }
-        return certificateOfElimination.isEmpty() ? null : certificateOfElimination;
+        return listOfProof.isEmpty() ? null : listOfProof;
     }
 
 
@@ -112,14 +116,14 @@ public class BaseballElimination {
             if (player == team)
                 continue;
 
-            for (int against = player + 1; against < this.numberOfTeams; against++) {
-                if (against == team)
+            for (int playingAgainst = player + 1; playingAgainst < this.numberOfTeams; playingAgainst++) {
+                if (playingAgainst == team)
                     continue;
 
-                int capacity = this.against[player][against];
+                int capacity = this.against[player][playingAgainst];
                 flowNetwork.addEdge(new FlowEdge(source, gameVertex, capacity));
                 flowNetwork.addEdge(new FlowEdge(gameVertex, getTeamVertex(player, team, numberOfRemainingGames), Double.POSITIVE_INFINITY));
-                flowNetwork.addEdge(new FlowEdge(gameVertex, getTeamVertex(against, team, numberOfRemainingGames), Double.POSITIVE_INFINITY));
+                flowNetwork.addEdge(new FlowEdge(gameVertex, getTeamVertex(playingAgainst, team, numberOfRemainingGames), Double.POSITIVE_INFINITY));
                 gameVertex++;
             }
 

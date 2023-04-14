@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BaseballElimination {
@@ -16,7 +17,7 @@ public class BaseballElimination {
     private final int[][] against;
     private final boolean[] eliminated;
     private final int numberOfGames;
-    private final List<String>[] certificateOfElimination;
+    private final HashMap<Integer, List<String>> certificateOfElimination;
 
     // create a baseball division from given filename in format specified below
     public BaseballElimination(String filename) {
@@ -29,7 +30,7 @@ public class BaseballElimination {
         this.against = new int[numberOfTeams][numberOfTeams];
         this.eliminated = new boolean[numberOfTeams]; // default false
         this.numberOfGames = getNumberOfGames();
-        this.certificateOfElimination = new List[numberOfTeams];
+        this.certificateOfElimination = new HashMap<>();
 
         readGameStatistics(in);
         calculateElimination();
@@ -57,7 +58,7 @@ public class BaseballElimination {
         for (int team = 0; team < this.numberOfTeams; team++) {
             if (isTriviallyEliminated(team, currentMaxWins)) {
                 this.eliminated[team] = true;
-                this.certificateOfElimination[team] = List.of(this.teams[getIndexOfMaxWins()]); // Is this sufficient?
+                this.certificateOfElimination.put(team, List.of(this.teams[getIndexOfMaxWins()])); // Seems to be sufficient as per the autograder
             }
             else
                 calculateNonTrivialElimination(team);
@@ -82,8 +83,8 @@ public class BaseballElimination {
     private void calculateNonTrivialElimination(int team) {
         FlowNetwork flowNetwork = createFlowNetwork(team);
         FordFulkerson fordFulkerson = new FordFulkerson(flowNetwork, 0, flowNetwork.V() - 1);
-        certificateOfElimination[team] = getCertificateOfElimination(team, fordFulkerson);
-        this.eliminated[team] = certificateOfElimination[team] != null;
+        this.certificateOfElimination.put(team, getCertificateOfElimination(team, fordFulkerson));
+        this.eliminated[team] = certificateOfElimination.get(team) != null;
     }
 
     private List<String> getCertificateOfElimination(int team, FordFulkerson fordFulkerson) {
@@ -197,7 +198,7 @@ public class BaseballElimination {
 
     // subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
-        return certificateOfElimination[indexOfTeam(team)];
+        return this.certificateOfElimination.get(indexOfTeam(team));
     }
 
     public static void main(String[] args) {

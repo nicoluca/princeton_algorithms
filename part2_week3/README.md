@@ -1,5 +1,3 @@
-[Princeton Algorithms II Week 2: Seam Carving](https://www.coursera.org/learn/algorithms-part2/home/week/2)
-
 ### Baseball Elimination
 
 [Princeton Algorithms II Week 3: Baseball Elimination](https://www.coursera.org/learn/algorithms-part2/home/week/3)

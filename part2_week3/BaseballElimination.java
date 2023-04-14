@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BaseballElimination {
@@ -11,6 +12,7 @@ public class BaseballElimination {
     private final int[][] against;
     private final boolean[] eliminated;
     private final int numberOfGames;
+    private final List<String>[] certificateOfElimination;
 
     // create a baseball division from given filename in format specified below
     public BaseballElimination(String filename) {
@@ -23,6 +25,7 @@ public class BaseballElimination {
         this.against = new int[numberOfTeams][numberOfTeams];
         this.eliminated = new boolean[numberOfTeams]; // default false
         this.numberOfGames = getNumberOfGames();
+        this.certificateOfElimination = new List[numberOfTeams];
 
         readGameStatistics(in);
         calculateElimination();
@@ -48,11 +51,23 @@ public class BaseballElimination {
         int currentMaxWins = getCurrentMaxWins();
 
         for (int team = 0; team < this.numberOfTeams; team++) {
-            if (isTriviallyEliminated(team, currentMaxWins))
+            if (isTriviallyEliminated(team, currentMaxWins)) {
                 this.eliminated[team] = true;
+                this.certificateOfElimination[team] = List.of(this.teams[getIndexOfMaxWins()]); // Is this sufficient?
+            }
             else
                 calculateNonTrivialElimination(team);
+
         }
+    }
+
+    private int getIndexOfMaxWins() {
+        int indexOfMaxWins = 0;
+        for (int team = 0; team < this.numberOfTeams; team++) {
+            if (this.wins[team] > this.wins[indexOfMaxWins])
+                indexOfMaxWins = team;
+        }
+        return indexOfMaxWins;
     }
 
     private boolean isTriviallyEliminated(int team, int currentMaxWins) {
@@ -62,14 +77,25 @@ public class BaseballElimination {
 
     private void calculateNonTrivialElimination(int team) {
         FlowNetwork flowNetwork = createFlowNetwork(team);
-//        FordFulkerson fordFulkerson = new FordFulkerson(flowNetwork, 0, flowNetwork.V() - 1);
-//        if (fordFulkerson.value() < this.remaining[team])
-//            this.eliminated[team] = true;
+        FordFulkerson fordFulkerson = new FordFulkerson(flowNetwork, 0, flowNetwork.V() - 1);
+        certificateOfElimination[team] = getCertificateOfElimination(team, fordFulkerson);
+        this.eliminated[team] = certificateOfElimination[team] != null;
+    }
+
+    private List<String> getCertificateOfElimination(int team, FordFulkerson fordFulkerson) {
+        List<String> certificateOfElimination = new ArrayList<>();
+        for (int otherTeam = 0; otherTeam < this.numberOfTeams; otherTeam++) {
+            if (otherTeam == team)
+                continue;
+
+            if (fordFulkerson.inCut(getTeamVertex(otherTeam, team, this.numberOfGames - this.numberOfTeams + 1)))
+                certificateOfElimination.add(this.teams[otherTeam]);
+        }
+        return certificateOfElimination.isEmpty() ? null : certificateOfElimination;
     }
 
 
     private FlowNetwork createFlowNetwork(int team) {
-        StdOut.println("Creating flow network for team " + team);
         int numberOfRemainingGames = this.numberOfGames - this.numberOfTeams + 1;
         int nuberOfRemainingTeams = this.numberOfTeams - 1;
         int numberOfVertices = 1 + numberOfRemainingGames + nuberOfRemainingTeams + 1;
@@ -102,7 +128,6 @@ public class BaseballElimination {
             flowNetwork.addEdge(new FlowEdge(getTeamVertex(player, team, numberOfRemainingGames), sink, capacity));
         }
 
-        StdOut.println(flowNetwork);
         return flowNetwork;
     }
 
@@ -164,12 +189,12 @@ public class BaseballElimination {
 
     // is given team eliminated?
     public boolean isEliminated(String team) {
-        return false;
+        return eliminated[indexOfTeam(team)];
     }
 
     // subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
-        return null;
+        return certificateOfElimination[indexOfTeam(team)];
     }
 
     public static void main(String[] args) {
@@ -178,7 +203,6 @@ public class BaseballElimination {
         String teams4File = "test-ressources/part2_week3/teams4.txt";
         String teams5File = "test-ressources/part2_week3/teams5.txt";
 
-        StdOut.println("########### Testing teams4.txt ###########");
         BaseballElimination division4 = new BaseballElimination(teams4File);
         assert division4.numberOfTeams() == 4 : "Number of teams should be 4, was " + division4.numberOfTeams();
         assert division4.teams().equals(List.of("Atlanta", "Philadelphia", "New_York", "Montreal")) : "Teams should be Atlanta, Philadelphia, New_York, Montreal; were " + division4.teams().toString();
@@ -191,7 +215,12 @@ public class BaseballElimination {
         assert division4.against("Atlanta", "Philadelphia") == 1 : "Atlanta should have played Philadelphia 1 time, played " + division4.against("Atlanta", "Philadelphia") + " times";
         assert division4.against("Philadelphia", "Atlanta") == 1 : "Philadelphia should have played Atlanta 1 time, played " + division4.against("Philadelphia", "Atlanta") + " times";
 
-        StdOut.println("############ Testing teams5.txt ############");
+        assert division4.isEliminated("Montreal") : "Montreal should be eliminated";
+        assert !division4.isEliminated("New_York") : "New_York should not be eliminated";
+        assert division4.isEliminated("Philadelphia") : "Philadelphia should  be eliminated";
+        assert !division4.isEliminated("Atlanta") : "Atlanta should not be eliminated";
+
+
         BaseballElimination division5 = new BaseballElimination(teams5File);
         assert division5.numberOfTeams() == 5 : "Number of teams should be 5, was " + division5.numberOfTeams();
         assert division5.teams().equals(List.of("New_York", "Baltimore", "Boston", "Toronto", "Detroit")) : "Teams should be New_York, Baltimore, Boston, Toronto, Detroit; were " + division5.teams().toString();
@@ -204,23 +233,23 @@ public class BaseballElimination {
         assert division5.against("New_York", "Baltimore") == 3 : "New_York should have played Baltimore 3 time, played " + division5.against("New_York", "Baltimore") + " times";
         assert division5.against("Baltimore", "New_York") == 3 : "Baltimore should have played New_York 3 time, played " + division5.against("Baltimore", "New_York") + " times";
 
-        StdOut.println("All tests passed.");
+        assert division5.isEliminated("Detroit") : "Detroit should be eliminated";
 
 
 
-//        BaseballElimination division = new BaseballElimination(args[0]);
-//        for (String team : division.teams()) {
-//            if (division.isEliminated(team)) {
-//                StdOut.print(team + " is eliminated by the subset R = { ");
-//                for (String t : division.certificateOfElimination(team)) {
-//                    StdOut.print(t + " ");
-//                }
-//                StdOut.println("}");
-//            }
-//            else {
-//                StdOut.println(team + " is not eliminated");
-//            }
-//        }
+        BaseballElimination division = new BaseballElimination(args[0]);
+        for (String team : division.teams()) {
+            if (division.isEliminated(team)) {
+                StdOut.print(team + " is eliminated by the subset R = { ");
+                for (String t : division.certificateOfElimination(team)) {
+                    StdOut.print(t + " ");
+                }
+                StdOut.println("}");
+            }
+            else {
+                StdOut.println(team + " is not eliminated");
+            }
+        }
     }
 
 }

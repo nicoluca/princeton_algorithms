@@ -1,4 +1,3 @@
-import com.sun.source.tree.BreakTree;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.TrieST;
@@ -9,26 +8,24 @@ import java.util.Set;
 public class BoggleSolver {
 
     private final TrieST<Integer> dictionaryTrie;
-    private final TrieST<Integer> foundTrie;
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
         if (dictionary == null)
-            throw new IllegalArgumentException("Dictionairy cannot be null.");
+            throw new IllegalArgumentException("Dictionary cannot be null.");
 
         this.dictionaryTrie = new TrieST<>();
-        this.foundTrie = new TrieST<>();
         parseDictionary(dictionary);
     }
 
     private void parseDictionary(String[] dict) {
         for (String word : dict) {
-            if (word.length() > 2)
+            if (word.length() >= 3)
                 this.dictionaryTrie.put(word, calculateScore(word));
         }
     }
 
-    private Integer calculateScore(String word) {
+    private int calculateScore(String word) {
         int length = word.length();
 
         if (length <= 2)
@@ -57,34 +54,34 @@ public class BoggleSolver {
         for (int row = 0; row < board.rows(); row++)
             for (int column = 0; column < board.cols(); column++) {
                 boolean[][] visited = new boolean[board.rows()][board.cols()];
-                DFS(row, column, "", visited, board, results);
+                dfs(row, column, "", visited, board, results);
             }
 
         return results.keys();
     }
 
-    private void DFS(int row, int column, String currentWord, boolean[][] visited, BoggleBoard board, TrieST<Integer> results) {
+    private void dfs(int row, int column, String currentWord, boolean[][] visited, BoggleBoard board, TrieST<Integer> results) {
+        char letter = board.getLetter(row, column);
+        visited[row][column] = true;
+
+        currentWord += letter == 'Q' ? "QU" : letter;
+
         if (this.dictionaryTrie.contains(currentWord))
             results.put(currentWord, this.dictionaryTrie.get(currentWord));
 
+        // TODO This is inefficient
         if (!this.dictionaryTrie.keysWithPrefix(currentWord).iterator().hasNext())
             return;
 
-        visited[row][column] = true;
-
         for (int[] neighbor : getNeighbors(row, column, board)) {
-            int currentRow = neighbor[0];
-            int currenCol = neighbor[1];
+            int nextRow = neighbor[0];
+            int nextCol = neighbor[1];
 
-            if (visited[currentRow][currenCol]) continue;
+            if (visited[nextRow][nextCol]) continue;
 
-            char nextLetter = board.getLetter(currentRow, currenCol);
-            String nextWord = nextLetter == 'Q' ? currentWord + "QU" : currentWord + nextLetter;
-
-            DFS(currentRow, currenCol, nextWord, visited, board, results);
+            dfs(nextRow, nextCol, currentWord, visited, board, results);
+            visited[nextRow][nextCol] = false;
         }
-
-        visited[row][column] = false;
     }
 
     private Iterable<int[]> getNeighbors(int row, int column, BoggleBoard board) {
@@ -132,6 +129,22 @@ public class BoggleSolver {
             testScore2 += testSolver.scoreOf(word);
 
         assert testScore2 == 84 : "Test score should be 84, was " + testScore2;
+
+        // dictionairy-yawl.txt
+        testIn = new In("test-resources/part3_week4/dictionary-yawl.txt");
+        testDict = testIn.readAllStrings();
+        testSolver = new BoggleSolver(testDict);
+        int wordCount3 = 0;
+
+        for (String word : testSolver.getAllValidWords(testBoard1)) {
+            wordCount3++;
+            assert testSolver.scoreOf(word) > 0 : "Expected score > 0 for word: " + word;
+        }
+
+        assert testSolver.scoreOf("EDIT") == 1 : "Expected dict to contain 'EDIT' with score 1, score was: " + testSolver.scoreOf("EDIT");
+        assert wordCount3 == 204 : "Expected 204 entries, was: " + wordCount3;
+
+        StdOut.println("All tests passed.");
 
         // Main
         In in = new In(args[0]);

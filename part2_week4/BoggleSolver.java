@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.TrieSET;
 import edu.princeton.cs.algs4.TrieST;
 
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.Set;
 public class BoggleSolver {
 
     private final TrieST<Integer> dictionaryTrie;
+    private final TrieSET prefixTrie;
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
@@ -15,14 +17,22 @@ public class BoggleSolver {
             throw new IllegalArgumentException("Dictionary cannot be null.");
 
         this.dictionaryTrie = new TrieST<>();
+        this.prefixTrie = new TrieSET();
         parseDictionary(dictionary);
     }
 
     private void parseDictionary(String[] dict) {
         for (String word : dict) {
-            if (word.length() >= 3)
+            if (word.length() >= 3) {
                 this.dictionaryTrie.put(word, calculateScore(word));
+                addPrefixes(word);
+            }
         }
+    }
+
+    private void addPrefixes(String word) {
+        for (int i = 0; i < word.length(); i++)
+            this.prefixTrie.add(word.substring(0, i + 1));
     }
 
     private int calculateScore(String word) {
@@ -70,8 +80,7 @@ public class BoggleSolver {
             results.put(currentWord, this.dictionaryTrie.get(currentWord));
 
         // TODO This is inefficient
-        if (!this.dictionaryTrie.keysWithPrefix(currentWord).iterator().hasNext())
-            return;
+        if (!this.prefixTrie.contains(currentWord)) return;
 
         for (int[] neighbor : getNeighbors(row, column, board)) {
             int nextRow = neighbor[0];

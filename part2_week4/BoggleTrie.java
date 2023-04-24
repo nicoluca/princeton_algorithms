@@ -1,14 +1,12 @@
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.HashMap;
-
 public class BoggleTrie<T> {
     private static final int R = 26; // A-Z
     private Node root;
 
     private static class Node {
         private Object value;
-        private Node[] next = new Node[R];
+        private final Node[] next = new Node[R];
     }
 
     public void put(String key, T value) {

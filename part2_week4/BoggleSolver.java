@@ -99,8 +99,11 @@ public class BoggleSolver {
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word) {
-        Integer value =  this.dictionaryTrie.get(word);
-        return value == null ? 0 : value;
+        if (word == null)
+            throw new IllegalArgumentException("Word cannot be null.");
+
+        Integer score = this.dictionaryTrie.get(word);
+        return score == null ? 0 : score;
     }
 
     public static void main(String[] args) {

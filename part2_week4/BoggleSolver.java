@@ -1,3 +1,4 @@
+import com.sun.source.tree.BreakTree;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.TrieST;
@@ -28,14 +29,19 @@ public class BoggleSolver {
     }
 
     private Integer calculateScore(String word) {
-        return switch (word.length()) {
-            case 0, 1, 2 -> 0;
-            case 3, 4 -> 1;
-            case 5 -> 2;
-            case 6 -> 3;
-            case 7 -> 5;
-            default -> 11;
-        };
+        int length = word.length();
+
+        if (length <= 2)
+            return 0;
+        if (length <= 4)
+            return 1;
+        if (length == 5)
+            return 2;
+        if (length == 6)
+            return 3;
+        if (length == 7)
+            return 5;
+        return 11;
     }
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
@@ -114,27 +120,18 @@ public class BoggleSolver {
         // board 4x4 (without q)
         BoggleBoard testBoard1 = new BoggleBoard("test-resources/part3_week4/board4x4.txt");
         int testScore1 = 0;
-        for (String word : testSolver.getAllValidWords(testBoard1)) {
-            StdOut.println(word);
+        for (String word : testSolver.getAllValidWords(testBoard1))
             testScore1 += testSolver.scoreOf(word);
-        }
-        StdOut.println("Score = " + testScore1);
-
 
         assert testScore1 == 33 : "Test score should be 33, was " + testScore1;
 
         // board-q
         BoggleBoard testBoard2 = new BoggleBoard("test-resources/part3_week4/board-q.txt");
         int testScore2 = 0;
-        for (String word : testSolver.getAllValidWords(testBoard2)) {
-            StdOut.println(word);
+        for (String word : testSolver.getAllValidWords(testBoard2))
             testScore2 += testSolver.scoreOf(word);
-        }
-        StdOut.println("Score = " + testScore2);
 
         assert testScore2 == 84 : "Test score should be 84, was " + testScore2;
-
-
 
         // Main
         In in = new In(args[0]);

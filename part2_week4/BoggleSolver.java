@@ -1,6 +1,6 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.TrieST;
+import edu.princeton.cs.algs4.TrieSET;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,24 +50,24 @@ public class BoggleSolver {
     }
 
     private Iterable<String> searchBoard(BoggleBoard board) {
-        TrieST<Integer> results = new TrieST<>();
+        TrieSET results = new TrieSET();
         for (int row = 0; row < board.rows(); row++)
             for (int column = 0; column < board.cols(); column++) {
                 boolean[][] visited = new boolean[board.rows()][board.cols()];
                 dfs(row, column, "", visited, board, results);
             }
 
-        return results.keys();
+        return results;
     }
 
-    private void dfs(int row, int column, String currentWord, boolean[][] visited, BoggleBoard board, TrieST<Integer> results) {
+    private void dfs(int row, int column, String currentWord, boolean[][] visited, BoggleBoard board, TrieSET results) {
         char letter = board.getLetter(row, column);
         visited[row][column] = true;
 
         currentWord += letter == 'Q' ? "QU" : letter;
 
         if (this.dictionaryTrie.contains(currentWord))
-            results.put(currentWord, this.dictionaryTrie.get(currentWord));
+            results.add(currentWord);
 
         // TODO This is inefficient
         if (!this.dictionaryTrie.isValidPrefix(currentWord)) return;

@@ -204,8 +204,8 @@ public class BaseballElimination {
     public static void main(String[] args) {
 
         // Unit tests, using teams4.txt and teams5.txt as on course website
-        String teams4File = "test-ressources/part2_week3/teams4.txt";
-        String teams5File = "test-ressources/part2_week3/teams5.txt";
+        String teams4File = "test-resources/part2_week3/teams4.txt";
+        String teams5File = "test-resources/part2_week3/teams5.txt";
 
         BaseballElimination division4 = new BaseballElimination(teams4File);
         assert division4.numberOfTeams() == 4 : "Number of teams should be 4, was " + division4.numberOfTeams();

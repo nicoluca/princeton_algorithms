@@ -178,7 +178,7 @@ public class SeamCarver {
         System.out.println("Starting tests...");
         System.out.println("############## Testing 3x4.png ##############");
         System.out.println();
-        String pathToPicture = "test-ressources/3x4.png";
+        String pathToPicture = "test-resources/3x4.png";
         double doubleCompareTolerance = 0.0001d;
 
         Picture picture = new Picture(pathToPicture);
@@ -214,7 +214,7 @@ public class SeamCarver {
 
         System.out.println("############## Testing 3x7.png ##############");
         System.out.println();
-        pathToPicture = "test-ressources/3x7.png";
+        pathToPicture = "test-resources/3x7.png";
         picture = new Picture(pathToPicture);
         seamCarver = new SeamCarver(picture);
         verticalSeam = seamCarver.findVerticalSeam();
@@ -226,7 +226,7 @@ public class SeamCarver {
 
         System.out.println("############## Testing 4x6.png ##############");
         System.out.println();
-        pathToPicture = "test-ressources/4x6.png";
+        pathToPicture = "test-resources/4x6.png";
         picture = new Picture(pathToPicture);
         seamCarver = new SeamCarver(picture);
         verticalSeam = seamCarver.findVerticalSeam();

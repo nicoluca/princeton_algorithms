@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.BinaryStdOut;
 import java.util.Arrays;
 
 public class BurrowsWheeler {
-    private static int R = 256; // extended ASCII
 
     // apply Burrows-Wheeler transform,
     // reading from standard input and writing to standard output
@@ -38,7 +37,7 @@ public class BurrowsWheeler {
         char[] sorted = lastRow.toCharArray();
         Arrays.sort(sorted);
 
-        int[] next = constructNext(index, lastRow);
+        int[] next = constructNext(lastRow);
 
         for (int i = 0; i < lastRow.length(); i++) {
             BinaryStdOut.write(sorted[index]);
@@ -48,15 +47,17 @@ public class BurrowsWheeler {
         BinaryStdOut.close();
     }
 
-    private static int[] constructNext(int index, String input) {
+    private static int[] constructNext(String input) {
         // key-indexed counting, as suggested in the assignment FAQ
         int[] next = new int[input.length()];
-        int[] count = new int[R + 1];
+        // extended ASCII
+        int r = 256;
+        int[] count = new int[r + 1];
 
         for (int i = 0; i < input.length(); i++)
             count[input.charAt(i) + 1]++;
 
-        for (int i = 0; i < R; i++)
+        for (int i = 0; i < r; i++)
             count[i + 1] += count[i];
 
         for (int i = 0; i < input.length(); i++)

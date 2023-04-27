@@ -21,7 +21,7 @@ public class CircularSuffixArray {
         CircularSuffix[] suffixes = new CircularSuffix[string.length()];
 
         for (int i = 0; i < string.length(); i++)
-            suffixes[i] = new CircularSuffix(string, i);
+            suffixes[i] = new CircularSuffix(i);
 
         Arrays.sort(suffixes); // O(N * log(N)), comparable is implemented in CircularSuffix
 
@@ -45,18 +45,18 @@ public class CircularSuffixArray {
     private class CircularSuffix implements Comparable<CircularSuffix> {
         private final int offset;
 
-        public CircularSuffix(String s, int offset) {
+        public CircularSuffix(int offset) {
             this.offset = offset;
         }
 
         // Not fastest but 'cleanest' implementation according to assignment FAQ
         @Override
-        public int compareTo(CircularSuffix o) {
-            if (this == o)
+        public int compareTo(CircularSuffix other) {
+            if (this == other)
                 return 0;
 
             int thisOffset = offset;
-            int otherOffset = o.offset;
+            int otherOffset = other.offset;
             int current = 0;
 
             while (current < string.length()) {

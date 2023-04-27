@@ -1,25 +1,25 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
+import java.util.LinkedList;
+
 public class MoveToFront {
     private static final int R = 256; // extended ASCII
-    private static final char[] ascii = createAscii();
 
     // apply move-to-front encoding, reading from standard input and writing to standard output
     public static void encode() {
+        LinkedList<Character> alphabet = createAsciiList();
 
         while (!BinaryStdIn.isEmpty()) {
             char c = BinaryStdIn.readChar();
-            int index = -1;
 
-            // Find the index of the character in the array
-            for (int i = 0; i < R; i++)
-                if (ascii[i] == c) {
-                    index = i;
-                    break;
-                }
+            int index = alphabet.indexOf(c);
 
-            bringToFront(c, index);
+            if (index == -1)
+                throw new IllegalArgumentException("Invalid input character: " + c);
+
+            alphabet.remove(index);
+            alphabet.addFirst(c);
 
             BinaryStdOut.write(index, 8); // 8 bits per character
         }
@@ -27,15 +27,16 @@ public class MoveToFront {
         BinaryStdOut.close();
     }
 
-
     // apply move-to-front decoding, reading from standard input and writing to standard output
     public static void decode() {
+        LinkedList<Character> alphabet = createAsciiList();
 
         while (!BinaryStdIn.isEmpty()) {
             int index = BinaryStdIn.readChar();
-            char c = ascii[index];
+            char c = alphabet.get(index);
 
-            bringToFront(c, index);
+            alphabet.remove(index);
+            alphabet.addFirst(c);
 
             BinaryStdOut.write(c, 8); // 8 bits per character
         }
@@ -43,16 +44,11 @@ public class MoveToFront {
         BinaryStdOut.close();
     }
 
-    private static void bringToFront(char c, int index) {
-        // Move the character to the front, shifting the rest of the array
-        System.arraycopy(ascii, 0, ascii, 1, index);
-        ascii[0] = c;
-    }
+    private static LinkedList<Character> createAsciiList() {
+        LinkedList<Character> ascii = new LinkedList<>();
+        for (char c = 0; c < R; c++)
+            ascii.add(c);
 
-    private static char[] createAscii() {
-        char[] ascii = new char[R];
-        for (int i = 0; i < R; i++)
-            ascii[i] = (char) i;
         return ascii;
     }
 
@@ -67,5 +63,4 @@ public class MoveToFront {
             else
                 decode();
     }
-
 }

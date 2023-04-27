@@ -108,7 +108,7 @@ public class BoggleSolver {
 
     public static void main(String[] args) {
         // Unit testing
-        In testIn = new In("test-resources/part3_week4/dictionary-algs4.txt");
+        In testIn = new In("test-resources/part2_week4/dictionary-algs4.txt");
         String[] testDict = testIn.readAllStrings();
         BoggleSolver testSolver = new BoggleSolver(testDict);
 
@@ -117,7 +117,7 @@ public class BoggleSolver {
         assert testSolver.scoreOf("QUESTIONS") == 11 : "Score of QUESTIONS should be 11, was " + testSolver.scoreOf("QUESTIONS");
 
         // board 4x4 (without q)
-        BoggleBoard testBoard1 = new BoggleBoard("test-resources/part3_week4/board4x4.txt");
+        BoggleBoard testBoard1 = new BoggleBoard("test-resources/part2_week4/board4x4.txt");
         int testScore1 = 0;
         for (String word : testSolver.getAllValidWords(testBoard1))
             testScore1 += testSolver.scoreOf(word);
@@ -125,7 +125,7 @@ public class BoggleSolver {
         assert testScore1 == 33 : "Test score should be 33, was " + testScore1;
 
         // board-q
-        BoggleBoard testBoard2 = new BoggleBoard("test-resources/part3_week4/board-q.txt");
+        BoggleBoard testBoard2 = new BoggleBoard("test-resources/part2_week4/board-q.txt");
         int testScore2 = 0;
         for (String word : testSolver.getAllValidWords(testBoard2))
             testScore2 += testSolver.scoreOf(word);
@@ -133,7 +133,7 @@ public class BoggleSolver {
         assert testScore2 == 84 : "Test score should be 84, was " + testScore2;
 
         // dictionairy-yawl.txt
-        testIn = new In("test-resources/part3_week4/dictionary-yawl.txt");
+        testIn = new In("test-resources/part2_week4/dictionary-yawl.txt");
         testDict = testIn.readAllStrings();
         testSolver = new BoggleSolver(testDict);
         int wordCount3 = 0;

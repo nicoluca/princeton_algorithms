@@ -176,9 +176,9 @@ public class SeamCarver {
     //  unit testing (optional)
     public static void main(String[] args) {
         System.out.println("Starting tests...");
-        System.out.println("############## Testing 3x4.png ##############");
+        System.out.println("############## Testing part2_week2/3x4.png ##############");
         System.out.println();
-        String pathToPicture = "test-resources/3x4.png";
+        String pathToPicture = "test-resources/part2_week2/3x4.png";
         double doubleCompareTolerance = 0.0001d;
 
         Picture picture = new Picture(pathToPicture);
@@ -212,9 +212,9 @@ public class SeamCarver {
         assert seamCarver.width() == 2 : "Width should be 2. Was: " + seamCarver.width();
         assert seamCarver.height() == 3 : "Height should be 3. Was: " + seamCarver.height();
 
-        System.out.println("############## Testing 3x7.png ##############");
+        System.out.println("############## Testing part2_week2/3x7.png ##############");
         System.out.println();
-        pathToPicture = "test-resources/3x7.png";
+        pathToPicture = "test-resources/part2_week2/3x7.png";
         picture = new Picture(pathToPicture);
         seamCarver = new SeamCarver(picture);
         verticalSeam = seamCarver.findVerticalSeam();
@@ -224,9 +224,9 @@ public class SeamCarver {
                 "Was: " + energyForSeam + "\n" +
                 "Seam was: " + Arrays.toString(verticalSeam); // From Autograder output
 
-        System.out.println("############## Testing 4x6.png ##############");
+        System.out.println("############## Testing part2_week2/4x6.png ##############");
         System.out.println();
-        pathToPicture = "test-resources/4x6.png";
+        pathToPicture = "test-resources/part2_week2/4x6.png";
         picture = new Picture(pathToPicture);
         seamCarver = new SeamCarver(picture);
         verticalSeam = seamCarver.findVerticalSeam();

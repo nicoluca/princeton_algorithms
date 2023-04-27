@@ -77,7 +77,8 @@ public class CircularSuffixArray {
 
     // unit testing (required)
     public static void main(String[] args) {
-        CircularSuffixArray csa = new CircularSuffixArray("ABRACADABRA!");
+        String input = "ABRACADABRA!";
+        CircularSuffixArray csa = new CircularSuffixArray(input);
 
         assert csa.length() == 12 : "Length should be 12, was " + csa.length();
         // Test input from https://coursera.cs.princeton.edu/algs4/assignments/burrows/specification.php
@@ -93,6 +94,14 @@ public class CircularSuffixArray {
         assert csa.index(9) == 6 : "Index 9 should be 6, was " + csa.index(9);
         assert csa.index(10) == 9 : "Index 10 should be 9, was " + csa.index(10);
         assert csa.index(11) == 2 : "Index 11 should be 2, was " + csa.index(11);
+
+        // Print ll suffixes
+        StdOut.print("Sorted suffixes:\n");
+        for (int i = 0; i < csa.length(); i++) {
+            for (int j = 0; j < csa.length(); j++)
+                StdOut.print(input.charAt((csa.index(i) + j) % csa.length()) + " ");
+            StdOut.print("\n");
+        }
         StdOut.println("All tests passed.");
     }
 }

@@ -1,4 +1,12 @@
+# Part II Week 2 - Seam Carving
+
 [Princeton Algorithms II Week 2: Seam Carving](https://www.coursera.org/learn/algorithms-part2/home/week/2)
+
+Implements a content-aware image resizing algorithm, using the dual-gradient energy function and a shortest path algorithm.
+
+Project assignment can be found [here](https://coursera.cs.princeton.edu/algs4/assignments/seam/specification.php).
+
+Passed with 94/100 points.
 
 ### Image samples processed by algorithm
 #### Original image (taken by myself)

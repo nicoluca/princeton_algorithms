@@ -1,4 +1,4 @@
-### Baseball Elimination
+### Burrows-Wheelers
 
 [Princeton Algorithms II Week 4: Burrows-Wheelers](https://www.coursera.org/learn/algorithms-part2/home/week/5)
 

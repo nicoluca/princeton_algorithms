@@ -1,4 +1,4 @@
-### Baseball Elimination
+### Boggle
 
 [Princeton Algorithms II Week 4: Boggle](https://www.coursera.org/learn/algorithms-part2/home/week/4)
 
